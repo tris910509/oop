@@ -100,16 +100,17 @@ function updateProductList() {
     products.forEach(product => {
         productList.innerHTML += `
             <div class="product-item">
-                <input type="checkbox" name="product-checkbox" value="${product.id}">
-                <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
-                <button onclick="editProduct(${product.id})">Edit</button>
-                <button onclick="deleteProduct(${product.id})">Hapus</button>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="product-checkbox" value="${product.id}">
+                    <label class="form-check-label">${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</label>
+                </div>
+                <button class="btn btn-warning btn-sm ml-2" onclick="editProduct(${product.id})">Edit</button>
+                <button class="btn btn-danger btn-sm ml-2" onclick="deleteProduct(${product.id})">Hapus</button>
             </div>
         `;
     });
 }
 
-// Transaksi Management
 // Transaksi Management
 function addTransaction() {
     const customerName = document.getElementById('transaction-customer-name').value;
@@ -129,52 +130,47 @@ function addTransaction() {
 
     const newTransaction = {
         id: Date.now(),
-        customer_name: customerName,
-        product_id: product.id,
-        product_name: product.name,
+        customerName: customerName,
+        productId: parseInt(productId),
         quantity: parseInt(quantity),
-        total_price: product.price * parseInt(quantity),
         status: 'Pending'
     };
 
     transactions.push(newTransaction);
     updateTransactionList();
-    showNotification(`Transaksi untuk ${customerName} berhasil ditambahkan.`);
+    showNotification('Transaksi berhasil ditambahkan.');
 }
 
-// Menampilkan daftar transaksi
 function updateTransactionList() {
     const transactionList = document.getElementById('transaction-list');
     transactionList.innerHTML = '';
 
     transactions.forEach(transaction => {
+        const product = products.find(p => p.id === transaction.productId);
         transactionList.innerHTML += `
             <div class="transaction-item">
-                <p>Transaksi ID: ${transaction.id}</p>
-                <p>Pelanggan: ${transaction.customer_name}</p>
-                <p>Produk: ${transaction.product_name}</p>
-                <p>Jumlah: ${transaction.quantity}</p>
-                <p>Total Harga: Rp ${transaction.total_price}</p>
-                <p>Status: ${transaction.status}</p>
-                <button onclick="updateTransactionStatus(${transaction.id}, 'Lunas')">Lunas</button>
-                <button onclick="updateTransactionStatus(${transaction.id}, 'Dibatalkan')">Dibatalkan</button>
+                <p>
+                    ${transaction.customerName} - Produk: ${product.name} - Jumlah: ${transaction.quantity} - Status: ${transaction.status}
+                    <button class="btn btn-info btn-sm ml-2" onclick="changeTransactionStatus(${transaction.id}, 'Lunas')">Lunas</button>
+                    <button class="btn btn-danger btn-sm ml-2" onclick="changeTransactionStatus(${transaction.id}, 'Dibatalkan')">Batalkan</button>
+                </p>
             </div>
         `;
     });
 }
 
-// Mengupdate status transaksi
-function updateTransactionStatus(transactionId, status) {
+function changeTransactionStatus(transactionId, status) {
     const transaction = transactions.find(t => t.id === transactionId);
     if (transaction) {
         transaction.status = status;
         updateTransactionList();
-        showNotification(`Status transaksi ID ${transactionId} berhasil diperbarui.`);
+        showNotification(`Status transaksi berhasil diperbarui menjadi ${status}.`);
+    } else {
+        alert('Transaksi tidak ditemukan.');
     }
 }
 
-
-// Filter Products
+// Filter Produk berdasarkan Kategori dan Supplier
 function filterProductsByCategoryAndSupplier() {
     const selectedCategoryId = document.getElementById('filter-category-id').value;
     const selectedSupplierId = document.getElementById('filter-supplier-id').value;
@@ -200,7 +196,7 @@ function displayFilteredProducts(filteredProducts) {
     });
 }
 
-// Category Management
+// Kategori & Supplier Management
 function addCategory() {
     const name = document.getElementById('category-name').value;
     if (!name) {
@@ -213,6 +209,46 @@ function addCategory() {
     updateCategorySelectOptions();
     updateProductList();
     showNotification(`Kategori ${name} berhasil ditambahkan.`);
+}
+
+function updateCategorySelectOptions() {
+    const categorySelect = document.getElementById('product-category-id');
+    const filterCategorySelect = document.getElementById('filter-category-id');
+
+    categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+    filterCategorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+
+    categories.forEach(category => {
+        categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+        filterCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+    });
+}
+
+function addSupplier() {
+    const name = document.getElementById('supplier-name').value;
+    if (!name) {
+        alert('Harap isi kolom supplier.');
+        return;
+    }
+
+    const newSupplier = { id: Date.now(), name: name };
+    suppliers.push(newSupplier);
+    updateSupplierSelectOptions();
+    updateProductList();
+    showNotification(`Supplier ${name} berhasil ditambahkan.`);
+}
+
+function updateSupplierSelectOptions() {
+    const supplierSelect = document.getElementById('product-supplier-id');
+    const filterSupplierSelect = document.getElementById('filter-supplier-id');
+
+    supplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
+    filterSupplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
+
+    suppliers.forEach(supplier => {
+        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+        filterSupplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+    });
 }
 
 function updateCategoryList() {
@@ -228,21 +264,6 @@ function updateCategoryList() {
     });
 }
 
-// Supplier Management
-function addSupplier() {
-    const name = document.getElementById('supplier-name').value;
-    if (!name) {
-        alert('Harap isi kolom supplier.');
-        return;
-    }
-
-    const newSupplier = { id: Date.now(), name: name };
-    suppliers.push(newSupplier);
-    updateSupplierSelectOptions();
-    updateProductList();
-    showNotification(`Supplier ${name} berhasil ditambahkan.`);
-}
-
 function updateSupplierList() {
     const supplierList = document.getElementById('supplier-list');
     supplierList.innerHTML = '';
@@ -253,33 +274,6 @@ function updateSupplierList() {
                 <p>${supplier.name}</p>
             </div>
         `;
-    });
-}
-
-// Dropdown Select Options
-function updateCategorySelectOptions() {
-    const categorySelect = document.getElementById('product-category-id');
-    const filterCategorySelect = document.getElementById('filter-category-id');
-
-    categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
-    filterCategorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
-
-    categories.forEach(category => {
-        categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
-        filterCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
-    });
-}
-
-function updateSupplierSelectOptions() {
-    const supplierSelect = document.getElementById('product-supplier-id');
-    const filterSupplierSelect = document.getElementById('filter-supplier-id');
-
-    supplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
-    filterSupplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
-
-    suppliers.forEach(supplier => {
-        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
-        filterSupplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
     });
 }
 
