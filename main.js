@@ -181,7 +181,148 @@ function deleteSupplier(index) {
     }
 }
 
+
+// Render Transaksi
+function renderTransactions() {
+    const transactionTable = document.getElementById("transactionTable");
+    transactionTable.innerHTML = "";
+    transactions.forEach((transaction, index) => {
+        const row = `<tr>
+            <td>${transaction.product}</td>
+            <td>${transaction.quantity}</td>
+            <td>${transaction.customer}</td>
+            <td>${transaction.status}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${index})">Hapus</button>
+            </td>
+        </tr>`;
+        transactionTable.innerHTML += row;
+    });
+}
+
+// Tambah Transaksi
+document.getElementById("transactionForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const transactionProduct = document.getElementById("transactionProduct").value;
+    const transactionQuantity = parseInt(document.getElementById("transactionQuantity").value);
+    const transactionCustomer = document.getElementById("transactionCustomer").value;
+    const transactionStatus = document.getElementById("transactionStatus").value;
+
+    // Validasi stok
+    const product = products.find(p => p.name === transactionProduct);
+    if (!product || transactionQuantity > product.stock) {
+        alert("Stok produk tidak mencukupi!");
+        return;
+    }
+
+    // Kurangi stok
+    product.stock -= transactionQuantity;
+
+    // Tambah transaksi
+    transactions.push({
+        product: transactionProduct,
+        quantity: transactionQuantity,
+        customer: transactionCustomer,
+        status: transactionStatus,
+        date: new Date().toISOString().split('T')[0] // Tanggal transaksi
+    });
+    saveToLocalStorage("transactions", transactions);
+    saveToLocalStorage("products", products);
+    renderProducts();
+    renderTransactions();
+    e.target.reset();
+});
+
+// Hapus Transaksi
+function deleteTransaction(index) {
+    if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
+        // Kembalikan stok
+        const transaction = transactions[index];
+        const product = products.find(p => p.name === transaction.product);
+        if (product) {
+            product.stock += transaction.quantity;
+        }
+        transactions.splice(index, 1);
+        saveToLocalStorage("transactions", transactions);
+        saveToLocalStorage("products", products);
+        renderProducts();
+        renderTransactions();
+    }
+}
+
+// Render Laporan
+document.getElementById("reportForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const startDate = new Date(document.getElementById("startDate").value);
+    const endDate = new Date(document.getElementById("endDate").value);
+    const reportTable = document.getElementById("reportTable");
+    reportTable.innerHTML = "";
+
+    const filteredTransactions = transactions.filter(transaction => {
+        const transactionDate = new Date(transaction.date);
+        return transactionDate >= startDate && transactionDate <= endDate;
+    });
+
+    filteredTransactions.forEach(transaction => {
+        const product = products.find(p => p.name === transaction.product);
+        const totalPrice = product ? product.price * transaction.quantity : 0;
+        const row = `<tr>
+            <td>${transaction.product}</td>
+            <td>${transaction.quantity}</td>
+            <td>${totalPrice.toLocaleString()}</td>
+            <td>${transaction.date}</td>
+        </tr>`;
+        reportTable.innerHTML += row;
+    });
+
+    if (filteredTransactions.length === 0) {
+        reportTable.innerHTML = "<tr><td colspan='4' class='text-center'>Tidak ada transaksi pada rentang tanggal ini</td></tr>";
+    }
+});
+
+// Render Pengguna
+function renderUsers() {
+    const userTable = document.getElementById("userTable");
+    userTable.innerHTML = "";
+    users.forEach((user, index) => {
+        const row = `<tr>
+            <td>${user.name}</td>
+            <td>${user.role}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteUser(${index})">Hapus</button>
+            </td>
+        </tr>`;
+        userTable.innerHTML += row;
+    });
+}
+
+// Tambah Pengguna
+document.getElementById("userForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const userName = document.getElementById("userName").value;
+    const userRole = document.getElementById("userRole").value;
+
+    // Tambah pengguna
+    users.push({ name: userName, role: userRole });
+    saveToLocalStorage("users", users);
+    renderUsers();
+    e.target.reset();
+});
+
+// Hapus Pengguna
+function deleteUser(index) {
+    if (confirm("Apakah Anda yakin ingin menghapus pengguna ini?")) {
+        users.splice(index, 1);
+        saveToLocalStorage("users", users);
+        renderUsers();
+    }
+}
+
 // Inisialisasi
 renderCategories();
 renderProducts();
 renderSuppliers();
+renderTransactions();
+renderUsers();
+
+
