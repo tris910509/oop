@@ -18,12 +18,18 @@ let suppliers = [
 
 let transactions = [];
 
+// Fungsi untuk menampilkan notifikasi
 function showNotification(message) {
     alert(message);
 }
 
 // Produk Management
-function addProduct(name, price, categoryId, supplierId) {
+function addProduct() {
+    const name = document.getElementById('product-name').value;
+    const price = document.getElementById('product-price').value;
+    const categoryId = document.getElementById('product-category-id').value;
+    const supplierId = document.getElementById('product-supplier-id').value;
+
     if (!name || !price || !categoryId || !supplierId) {
         alert("Harap isi semua kolom produk.");
         return;
@@ -44,6 +50,11 @@ function addProduct(name, price, categoryId, supplierId) {
 
 function editProduct(productId) {
     const product = products.find(p => p.id === productId);
+    if (!product) {
+        alert('Produk tidak ditemukan.');
+        return;
+    }
+
     const newName = prompt("Edit nama produk:", product.name);
     const newPrice = prompt("Edit harga produk:", product.price);
     const newCategoryId = prompt("Edit kategori produk:", product.category_id);
@@ -86,7 +97,7 @@ function updateProductList() {
     const productList = document.getElementById('product-list');
     productList.innerHTML = '';
 
-    products.forEach((product) => {
+    products.forEach(product => {
         productList.innerHTML += `
             <div class="product-item">
                 <input type="checkbox" name="product-checkbox" value="${product.id}">
@@ -98,34 +109,12 @@ function updateProductList() {
     });
 }
 
-function updateCategorySelectOptions() {
-    const categorySelect = document.getElementById('product-category-id');
-    const filterCategorySelect = document.getElementById('filter-category-id');
-    
-    categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
-    filterCategorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
-    
-    categories.forEach(category => {
-        categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
-        filterCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
-    });
-}
-
-function updateSupplierSelectOptions() {
-    const supplierSelect = document.getElementById('product-supplier-id');
-    const filterSupplierSelect = document.getElementById('filter-supplier-id');
-    
-    supplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
-    filterSupplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
-    
-    suppliers.forEach(supplier => {
-        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
-        filterSupplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
-    });
-}
-
 // Transaksi Management
-function addTransaction(customerName, productId, quantity) {
+function addTransaction() {
+    const customerName = document.getElementById('transaction-customer-name').value;
+    const productId = document.getElementById('transaction-product-id').value;
+    const quantity = document.getElementById('transaction-quantity').value;
+
     if (!customerName || !productId || !quantity) {
         alert('Harap isi semua kolom transaksi.');
         return;
@@ -143,7 +132,7 @@ function addTransaction(customerName, productId, quantity) {
         product_id: product.id,
         product_name: product.name,
         quantity: parseInt(quantity),
-        total_price: product.price * quantity,
+        total_price: product.price * parseInt(quantity),
         status: 'Pending'
     };
 
@@ -155,7 +144,7 @@ function addTransaction(customerName, productId, quantity) {
 function updateTransactionList() {
     const transactionList = document.getElementById('transaction-list');
     transactionList.innerHTML = '';
-    
+
     transactions.forEach(transaction => {
         transactionList.innerHTML += `
             <div class="transaction-item">
@@ -212,7 +201,7 @@ function filterProductsByCategoryAndSupplier() {
 function displayFilteredProducts(filteredProducts) {
     const filteredProductList = document.getElementById('filtered-product-list');
     filteredProductList.innerHTML = '';
-    
+
     filteredProducts.forEach(product => {
         filteredProductList.innerHTML += `
             <div class="filtered-product-item">
@@ -223,7 +212,8 @@ function displayFilteredProducts(filteredProducts) {
 }
 
 // Category Management
-function addCategory(name) {
+function addCategory() {
+    const name = document.getElementById('category-name').value;
     if (!name) {
         alert('Harap isi kolom kategori.');
         return;
@@ -250,7 +240,8 @@ function updateCategoryList() {
 }
 
 // Supplier Management
-function addSupplier(name) {
+function addSupplier() {
+    const name = document.getElementById('supplier-name').value;
     if (!name) {
         alert('Harap isi kolom supplier.');
         return;
@@ -276,7 +267,34 @@ function updateSupplierList() {
     });
 }
 
-// Initialize dropdown options
+// Dropdown Select Options
+function updateCategorySelectOptions() {
+    const categorySelect = document.getElementById('product-category-id');
+    const filterCategorySelect = document.getElementById('filter-category-id');
+
+    categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+    filterCategorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+
+    categories.forEach(category => {
+        categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+        filterCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+    });
+}
+
+function updateSupplierSelectOptions() {
+    const supplierSelect = document.getElementById('product-supplier-id');
+    const filterSupplierSelect = document.getElementById('filter-supplier-id');
+
+    supplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
+    filterSupplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
+
+    suppliers.forEach(supplier => {
+        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+        filterSupplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+    });
+}
+
+// Initialize
 updateProductList();
 updateCategorySelectOptions();
 updateSupplierSelectOptions();
