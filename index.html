@@ -1,40 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem CRUD Produk Tanpa Database</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Sistem Informasi Jasa dan Produk</title>
+    <style>
+        .product-item, .filtered-product-item, .category-item, .supplier-item, .transaction-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        button {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
+    <section>
+        <h2>Tambah Produk Baru</h2>
+        <input type="text" id="product-name" placeholder="Nama Produk">
+        <input type="number" id="product-price" placeholder="Harga Produk">
+        <select id="product-category-id">
+            <option value="">Pilih Kategori</option>
+        </select>
+        <select id="product-supplier-id">
+            <option value="">Pilih Supplier</option>
+        </select>
+        <button onclick="addProduct(document.getElementById('product-name').value, document.getElementById('product-price').value, document.getElementById('product-category-id').value, document.getElementById('product-supplier-id').value)">Tambah Produk</button>
+    </section>
 
-    <header>
-        <h1>CRUD Produk Tanpa Database</h1>
-        <button id="add-product-btn">Tambah Produk</button>
-    </header>
-
-    <main>
+    <section>
         <h2>Daftar Produk</h2>
         <div id="product-list"></div>
+    </section>
 
-        <!-- Form Tambah Produk -->
-        <div id="product-form" class="hidden">
-            <h3>Tambah Produk</h3>
-            <form id="form">
-                <form id="form">
-    <input type="text" id="product-name" placeholder="Nama Produk" required>
-    <input type="text" id="product-description" placeholder="Deskripsi" required>
-    <input type="number" id="product-price" placeholder="Harga" required>
-    <select id="product-category" required></select>
-    <select id="product-supplier" required></select>
-    <button type="submit">Simpan</button>
-    <button type="button" id="cancel-btn">Batal</button>
-</form>
+    <section>
+        <h2>Filter Produk</h2>
+        <select id="filter-category-id" onchange="filterProductsByCategoryAndSupplier()">
+            <option value="">Pilih Kategori</option>
+        </select>
+        <select id="filter-supplier-id" onchange="filterProductsByCategoryAndSupplier()">
+            <option value="">Pilih Supplier</option>
+        </select>
+        <div id="filtered-product-list"></div>
+        <button onclick="filterProductsByCategoryAndSupplier()">Filter Produk</button>
+    </section>
 
-            </form>
-        </div>
-    </main>
+    <section>
+        <h2>Tambah Kategori Baru</h2>
+        <input type="text" id="category-name" placeholder="Nama Kategori">
+        <button onclick="addCategory(document.getElementById('category-name').value)">Tambah Kategori</button>
+    </section>
 
-    <script src="app.js"></script>
+    <section>
+        <h2>Daftar Kategori</h2>
+        <div id="category-list"></div>
+    </section>
+
+    <section>
+        <h2>Tambah Supplier Baru</h2>
+        <input type="text" id="supplier-name" placeholder="Nama Supplier">
+        <button onclick="addSupplier(document.getElementById('supplier-name').value)">Tambah Supplier</button>
+    </section>
+
+    <section>
+        <h2>Daftar Supplier</h2>
+        <div id="supplier-list"></div>
+    </section>
+
+    <section>
+        <h2>Tambah Transaksi Baru</h2>
+        <input type="text" id="customer-name" placeholder="Nama Pelanggan">
+        <select id="product-id">
+            <option value="">Pilih Produk</option>
+        </select>
+        <input type="number" id="quantity" placeholder="Jumlah">
+        <button onclick="addTransaction(document.getElementById('customer-name').value, document.getElementById('product-id').value, document.getElementById('quantity').value)">Tambah Transaksi</button>
+    </section>
+
+    <section>
+        <h2>Daftar Transaksi</h2>
+        <div id="transaction-list"></div>
+    </section>
+
+    <section>
+        <h2>Laporan Transaksi</h2>
+        <button onclick="generateTransactionReport()">Generate Laporan</button>
+    </section>
+
+    <script src="script.js"></script>
 </body>
 </html>
