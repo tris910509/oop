@@ -1,132 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id-ID">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kasir</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="app.js"></script>
-    <style>
-        .container {
-            margin-top: 20px;
-        }
-    </style>
+    <title>Aplikasi Point of Sale</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Aplikasi Kasir</h1>
-
-        <!-- Produk Section -->
-        <div class="my-4">
-            <h2>Produk</h2>
-            <form id="productForm">
-                <div class="form-group">
-                    <input type="text" id="productName" class="form-control" placeholder="Nama Produk" required>
-                </div>
-                <div class="form-group">
-                    <input type="number" id="productPrice" class="form-control" placeholder="Harga Produk" required>
-                </div>
-                <div class="form-group">
-                    <input type="number" id="productStock" class="form-control" placeholder="Stok Produk" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Tambah Produk</button>
-            </form>
-
-            <table class="table table-bordered mt-4" id="productTable">
-                <thead>
-                    <tr>
-                        <th>Nama Produk</th>
-                        <th>Harga</th>
-                        <th>Stok</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="productTableBody">
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Transaksi Section -->
-        <div class="my-4">
-            <h2>Transaksi</h2>
-            <form id="transactionForm">
-                <div class="form-group">
-                    <select id="productSelect" class="form-control" required></select>
-                </div>
-                <div class="form-group">
-                    <input type="number" id="transactionQuantity" class="form-control" placeholder="Jumlah" required>
-                </div>
-                <div class="form-group">
-                    <select id="paymentMethod" class="form-control">
-                        <option value="Cash">Cash</option>
-                        <option value="Card">Card</option>
-                        <option value="Transfer">Transfer</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Tambah Transaksi</button>
-            </form>
-
-            <table class="table table-bordered mt-4" id="transactionTable">
-                <thead>
-                    <tr>
-                        <th>Nama Produk</th>
-                        <th>Jumlah</th>
-                        <th>Metode Pembayaran</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody id="transactionTableBody">
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pelanggan Section -->
-        <div class="my-4">
-            <h2>Pelanggan</h2>
-            <form id="customerForm">
-                <div class="form-group">
-                    <input type="text" id="customerName" class="form-control" placeholder="Nama Pelanggan" required>
-                </div>
-                <div class="form-group">
-                    <input type="tel" id="customerPhone" class="form-control" placeholder="Nomor Telepon" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Tambah Pelanggan</button>
-            </form>
-
-            <table class="table table-bordered mt-4" id="customerTable">
-                <thead>
-                    <tr>
-                        <th>Nama Pelanggan</th>
-                        <th>Nomor Telepon</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="customerTableBody">
-                </tbody>
-            </table>
+        <h1>Aplikasi Point of Sale</h1>
+        <form id="product-form">
+            <input type="text" id="product-name" placeholder="Nama Produk" required>
+            <input type="number" id="product-price" placeholder="Harga" required>
+            <input type="number" id="product-quantity" placeholder="Jumlah" required>
+            <button type="submit">Tambah Produk</button>
+        </form>
+        <table id="product-list">
+            <thead>
+                <tr>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Total</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Daftar produk akan ditampilkan di sini -->
+            </tbody>
+        </table>
+        <div id="total">
+            <p>Total: Rp <span id="total-amount">0</span></p>
         </div>
     </div>
-
-    <div class="my-4">
-    <h2>Grafik Penjualan</h2>
-    <div id="salesChart" style="height: 400px; width: 100%;"></div>
-</div>
-
-
-<div class="my-4">
-    <h2>Laporan Penjualan Harian</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Tanggal</th>
-                <th>Total Penjualan</th>
-            </tr>
-        </thead>
-        <tbody id="dailySalesTableBody"></tbody>
-    </table>
-</div>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
