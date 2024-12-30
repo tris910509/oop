@@ -1,185 +1,289 @@
-// Array untuk menyimpan produk, kategori, supplier, dan pelanggan
-let products = [];
-let categories = [];
-let suppliers = [];
-let customers = [];
+let products = [
+    { id: 1, name: "Produk A", price: 1000, category_id: 1, supplier_id: 1 },
+    { id: 2, name: "Produk B", price: 2000, category_id: 1, supplier_id: 2 },
+    // Produk lainnya...
+];
 
-// Fungsi untuk menampilkan kategori
-function loadCategories() {
-    categories.forEach((category) => {
-        const categorySelect = document.getElementById('product-category');
-        categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
-    });
+let categories = [
+    { id: 1, name: "Kategori A" },
+    { id: 2, name: "Kategori B" },
+    // Kategori lainnya...
+];
+
+let suppliers = [
+    { id: 1, name: "Supplier A" },
+    { id: 2, name: "Supplier B" },
+    // Supplier lainnya...
+];
+
+let transactions = [];
+
+function showNotification(message) {
+    alert(message);
 }
 
-// Fungsi untuk menampilkan supplier
-function loadSuppliers() {
-    suppliers.forEach((supplier) => {
-        const supplierSelect = document.getElementById('product-supplier');
-        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
-    });
-}
-
-// Fungsi untuk menampilkan pelanggan
-function loadCustomers() {
-    const customerSelect = document.getElementById('customer-select');
-    customers.forEach((customer) => {
-        customerSelect.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
-    });
-}
-
-// Fungsi untuk menampilkan produk
-function displayProducts(filteredData = products) {
-    const productList = document.getElementById('product-list');
-    productList.innerHTML = '';
-
-    if (filteredData.length === 0) {
-        productList.innerHTML = '<p>Tidak ada produk.</p>';
+// Produk Management
+function addProduct(name, price, categoryId, supplierId) {
+    if (!name || !price || !categoryId || !supplierId) {
+        alert("Harap isi semua kolom produk.");
         return;
     }
 
-    filteredData.forEach((product, index) => {
-        const category = categories.find(cat => cat.id === product.category_id)?.name || 'N/A';
-        const supplier = suppliers.find(supp => supp.id === product.supplier_id)?.name || 'N/A';
+    const newProduct = {
+        id: Date.now(),
+        name: name,
+        price: parseFloat(price),
+        category_id: parseInt(categoryId),
+        supplier_id: parseInt(supplierId)
+    };
 
+    products.push(newProduct);
+    updateProductList();
+    showNotification(`Produk ${name} berhasil ditambahkan.`);
+}
+
+function editProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    const newName = prompt("Edit nama produk:", product.name);
+    const newPrice = prompt("Edit harga produk:", product.price);
+    const newCategoryId = prompt("Edit kategori produk:", product.category_id);
+    const newSupplierId = prompt("Edit supplier produk:", product.supplier_id);
+
+    if (newName && newPrice && newCategoryId && newSupplierId) {
+        product.name = newName;
+        product.price = parseFloat(newPrice);
+        product.category_id = parseInt(newCategoryId);
+        product.supplier_id = parseInt(newSupplierId);
+        updateProductList();
+        showNotification(`Produk ${newName} berhasil diperbarui.`);
+    }
+}
+
+function deleteProduct(productId) {
+    const productIndex = products.findIndex(p => p.id === productId);
+    if (productIndex > -1) {
+        products.splice(productIndex, 1);
+        updateProductList();
+        showNotification('Produk berhasil dihapus.');
+    }
+}
+
+function updateProductList() {
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = '';
+    
+    products.forEach((product) => {
         productList.innerHTML += `
             <div class="product-item">
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
-                <p>Harga: Rp ${product.price}</p>
-                <p>Kategori: ${category}</p>
-                <p>Supplier: ${supplier}</p>
-                <button onclick="editProduct(${index})">Edit</button>
-                <button onclick="deleteProduct(${index})">Hapus</button>
+                <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
+                <button onclick="editProduct(${product.id})">Edit</button>
+                <button onclick="deleteProduct(${product.id})">Hapus</button>
             </div>
         `;
     });
-
-    // Hapus pagination sebelumnya jika ada
-    const pagination = document.querySelector('.pagination');
-    if (pagination) {
-        pagination.remove();
-    }
-
-    if (filteredData.length > 10) {
-        createPagination(filteredData);
-    }
 }
 
-// Fungsi untuk menambah produk
-function addProduct(product) {
-    if (!product.name || !product.description || isNaN(product.price)) {
-        alert("Harap isi semua kolom dengan benar.");
+function updateCategorySelectOptions() {
+    const categorySelect = document.getElementById('product-category-id');
+    const filterCategorySelect = document.getElementById('filter-category-id');
+    
+    categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+    filterCategorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+    
+    categories.forEach(category => {
+        categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+        filterCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+    });
+}
+
+function updateSupplierSelectOptions() {
+    const supplierSelect = document.getElementById('product-supplier-id');
+    const filterSupplierSelect = document.getElementById('filter-supplier-id');
+    
+    supplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
+    filterSupplierSelect.innerHTML = '<option value="">Pilih Supplier</option>';
+    
+    suppliers.forEach(supplier => {
+        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+        filterSupplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+    });
+}
+
+// Transaksi Management
+function addTransaction(customerName, productId, quantity) {
+    if (!customerName || !productId || !quantity) {
+        alert('Harap isi semua kolom transaksi.');
         return;
     }
-    products.push(product);
-    displayProducts();
-}
 
-// Fungsi untuk edit produk
-function editProduct(index) {
-    const product = products[index];
-
-    document.getElementById('product-name').value = product.name;
-    document.getElementById('product-description').value = product.description;
-    document.getElementById('product-price').value = product.price;
-    document.getElementById('product-category').value = product.category_id;
-    document.getElementById('product-supplier').value = product.supplier_id;
-    
-    document.getElementById('product-form').classList.remove('hidden');
-    document.getElementById('add-product-btn').style.display = 'none';
-    
-    document.getElementById('form').onsubmit = (event) => {
-        event.preventDefault();
-        
-        products[index] = {
-            name: document.getElementById('product-name').value,
-            description: document.getElementById('product-description').value,
-            price: parseFloat(document.getElementById('product-price').value),
-            category_id: parseInt(document.getElementById('product-category').value),
-            supplier_id: parseInt(document.getElementById('product-supplier').value)
-        };
-        
-        displayProducts();
-        cancelForm();
-    };
-}
-
-// Fungsi untuk hapus produk
-function deleteProduct(index) {
-    products.splice(index, 1);
-    displayProducts();
-}
-
-// Fungsi untuk menampilkan form
-document.getElementById('add-product-btn').addEventListener('click', () => {
-    document.getElementById('product-form').classList.remove('hidden');
-    document.getElementById('add-product-btn').style.display = 'none';
-});
-
-// Fungsi untuk membatalkan form
-function cancelForm() {
-    document.getElementById('product-name').value = '';
-    document.getElementById('product-description').value = '';
-    document.getElementById('product-price').value = '';
-    document.getElementById('product-category').value = '';
-    document.getElementById('product-supplier').value = '';
-    
-    document.getElementById('product-form').classList.add('hidden');
-    document.getElementById('add-product-btn').style.display = 'block';
-}
-
-// Fungsi submit form
-document.getElementById('form').onsubmit = (event) => {
-    event.preventDefault();
-    
-    const product = {
-        name: document.getElementById('product-name').value,
-        description: document.getElementById('product-description').value,
-        price: parseFloat(document.getElementById('product-price').value),
-        category_id: parseInt(document.getElementById('product-category').value),
-        supplier_id: parseInt(document.getElementById('product-supplier').value)
-    };
-    
-    addProduct(product);
-    cancelForm();
-};
-
-// Fungsi pencarian produk berdasarkan kategori dan supplier
-function searchProducts() {
-    const query = document.getElementById('search-input').value.toLowerCase();
-    const filteredProducts = products.filter(product => 
-        product.name.toLowerCase().includes(query) || 
-        product.category_id.toString().includes(query) || 
-        product.supplier_id.toString().includes(query)
-    );
-    displayProducts(filteredProducts);
-}
-
-// Fungsi untuk membuat pagination
-function createPagination(data) {
-    const pagination = document.createElement('div');
-    pagination.classList.add('pagination');
-    
-    let pages = Math.ceil(data.length / 10);
-    for (let i = 1; i <= pages; i++) {
-        pagination.innerHTML += `<button onclick="goToPage(${i}, data)">${i}</button>`;
+    const product = products.find(p => p.id === parseInt(productId));
+    if (!product) {
+        alert('Produk tidak ditemukan.');
+        return;
     }
-    
-    document.getElementById('product-list').appendChild(pagination);
+
+    const newTransaction = {
+        id: Date.now(),
+        customer_name: customerName,
+        product_id: product.id,
+        product_name: product.name,
+        quantity: parseInt(quantity),
+        total_price: product.price * quantity,
+        status: 'Pending'
+    };
+
+    transactions.push(newTransaction);
+    updateTransactionList();
+    showNotification(`Transaksi untuk ${customerName} berhasil ditambahkan.`);
 }
 
-// Fungsi untuk mengganti halaman produk
-function goToPage(page, data) {
-    const productList = document.getElementById('product-list');
-    productList.innerHTML = '';
+function updateTransactionList() {
+    const transactionList = document.getElementById('transaction-list');
+    transactionList.innerHTML = '';
     
-    let start = (page - 1) * 10;
-    let end = page * 10;
-    const productsToShow = data.slice(start, end);
-    
-    displayProducts(productsToShow);
+    transactions.forEach(transaction => {
+        transactionList.innerHTML += `
+            <div class="transaction-item">
+                <p>Transaksi ID: ${transaction.id}</p>
+                <p>Pelanggan: ${transaction.customer_name}</p>
+                <p>Produk: ${transaction.product_name}</p>
+                <p>Jumlah: ${transaction.quantity}</p>
+                <p>Total Harga: Rp ${transaction.total_price}</p>
+                <p>Status: ${transaction.status}</p>
+                <button onclick="updateTransactionStatus(${transaction.id}, 'Lunas')">Lunas</button>
+                <button onclick="updateTransactionStatus(${transaction.id}, 'Dibatalkan')">Dibatalkan</button>
+            </div>
+        `;
+    });
 }
 
-// Tampilkan produk saat halaman dimuat
-displayProducts();
+function updateTransactionStatus(transactionId, status) {
+    const transaction = transactions.find(t => t.id === transactionId);
+    if (transaction) {
+        transaction.status = status;
+        updateTransactionList();
+        showNotification(`Status transaksi ID ${transactionId} berhasil diperbarui.`);
+    }
+}
+
+function generateTransactionReport() {
+    const report = {
+        totalPending: transactions.filter(t => t.status === 'Pending').length,
+        totalPaid: transactions.filter(t => t.status === 'Lunas').length,
+        totalCanceled: transactions.filter(t => t.status === 'Dibatalkan').length,
+        totalRevenue: transactions.filter(t => t.status === 'Lunas').reduce((acc, t) => acc + t.total_price, 0)
+    };
+
+    showNotification(`Laporan: \n- Pending: ${report.totalPending}\n- Lunas: ${report.totalPaid}\n- Dibatalkan: ${report.totalCanceled}\n- Pendapatan: Rp ${report.totalRevenue}`);
+}
+
+function filterProductsByCategoryAndSupplier() {
+    const selectedCategory = parseInt(document.getElementById('filter-category-id').value);
+    const selectedSupplier = parseInt(document.getElementById('filter-supplier-id').value);
+
+    const filteredProducts = products.filter(product => {
+        return (selectedCategory ? product.category_id === selectedCategory : true) &&
+               (selectedSupplier ? product.supplier_id === selectedSupplier : true);
+    });
+
+    displayFilteredProducts(filteredProducts);
+}
+
+function displayFilteredProducts(filteredProducts) {
+    const filteredProductList = document.getElementById('filtered-product-list');
+    filteredProductList.innerHTML = '';
+
+    if (filteredProducts.length === 0) {
+        filteredProductList.innerHTML = '<p>Tidak ada produk yang ditemukan.</p>';
+    } else {
+        filteredProducts.forEach(product => {
+            filteredProductList.innerHTML += `
+                <div class="filtered-product-item">
+                    <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
+                </div>
+            `;
+        });
+    }
+}
+
+// Fungsi untuk menambahkan kategori baru
+function addCategory(name) {
+    if (!name) {
+        alert('Harap isi kolom nama kategori.');
+        return;
+    }
+
+    const newCategory = {
+        id: Date.now(),
+        name: name
+    };
+
+    categories.push(newCategory);
+    updateCategorySelectOptions();
+    showNotification(`Kategori ${name} berhasil ditambahkan.`);
+}
+
+// Fungsi untuk menambahkan supplier baru
+function addSupplier(name) {
+    if (!name) {
+        alert('Harap isi kolom nama supplier.');
+        return;
+    }
+
+    const newSupplier = {
+        id: Date.now(),
+        name: name
+    };
+
+    suppliers.push(newSupplier);
+    updateSupplierSelectOptions();
+    showNotification(`Supplier ${name} berhasil ditambahkan.`);
+}
+
+// Fungsi untuk mengedit kategori
+function editCategory(categoryId) {
+    const category = categories.find(c => c.id === categoryId);
+    const newName = prompt("Edit nama kategori:", category.name);
+
+    if (newName) {
+        category.name = newName;
+        updateCategorySelectOptions();
+        showNotification(`Kategori ${newName} berhasil diperbarui.`);
+    }
+}
+
+// Fungsi untuk menghapus kategori
+function deleteCategory(categoryId) {
+    categories = categories.filter(category => category.id !== categoryId);
+    updateCategorySelectOptions();
+    showNotification('Kategori berhasil dihapus.');
+}
+
+// Fungsi untuk mengedit supplier
+function editSupplier(supplierId) {
+    const supplier = suppliers.find(s => s.id === supplierId);
+    const newName = prompt("Edit nama supplier:", supplier.name);
+
+    if (newName) {
+        supplier.name = newName;
+        updateSupplierSelectOptions();
+        showNotification(`Supplier ${newName} berhasil diperbarui.`);
+    }
+}
+
+// Fungsi untuk menghapus supplier
+function deleteSupplier(supplierId) {
+    suppliers = suppliers.filter(supplier => supplier.id !== supplierId);
+    updateSupplierSelectOptions();
+    showNotification('Supplier berhasil dihapus.');
+}
+
+// Fungsi untuk menghapus produk
+function deleteProduct(productId) {
+    const productIndex = products.findIndex(p => p.id === productId);
+    if (productIndex > -1) {
+        products.splice(productIndex, 1);
+        updateProductList();
+        showNotification('Produk berhasil dihapus.');
+    }
+}
