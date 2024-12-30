@@ -110,6 +110,7 @@ function updateProductList() {
 }
 
 // Transaksi Management
+// Transaksi Management
 function addTransaction() {
     const customerName = document.getElementById('transaction-customer-name').value;
     const productId = document.getElementById('transaction-product-id').value;
@@ -141,6 +142,7 @@ function addTransaction() {
     showNotification(`Transaksi untuk ${customerName} berhasil ditambahkan.`);
 }
 
+// Menampilkan daftar transaksi
 function updateTransactionList() {
     const transactionList = document.getElementById('transaction-list');
     transactionList.innerHTML = '';
@@ -161,6 +163,7 @@ function updateTransactionList() {
     });
 }
 
+// Mengupdate status transaksi
 function updateTransactionStatus(transactionId, status) {
     const transaction = transactions.find(t => t.id === transactionId);
     if (transaction) {
@@ -170,20 +173,6 @@ function updateTransactionStatus(transactionId, status) {
     }
 }
 
-function generateTransactionReport() {
-    const report = {
-        totalPending: transactions.filter(t => t.status === 'Pending').length,
-        totalCompleted: transactions.filter(t => t.status === 'Lunas').length,
-        totalCancelled: transactions.filter(t => t.status === 'Dibatalkan').length
-    };
-
-    alert(`
-        Laporan Transaksi:
-        - Total Pending: ${report.totalPending}
-        - Total Lunas: ${report.totalCompleted}
-        - Total Dibatalkan: ${report.totalCancelled}
-    `);
-}
 
 // Filter Products
 function filterProductsByCategoryAndSupplier() {
