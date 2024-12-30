@@ -71,5 +71,6 @@ function deleteProduct(index) {
 productForm.onsubmit = (e) => {
     e.preventDefault();
     addProduct(
-        product
+        productName.value,
+
 ::contentReference[oaicite:0]{index=0}
