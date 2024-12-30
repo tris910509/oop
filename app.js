@@ -56,6 +56,8 @@ function editProduct(productId) {
         product.supplier_id = parseInt(newSupplierId);
         updateProductList();
         showNotification(`Produk ${newName} berhasil diperbarui.`);
+    } else {
+        alert("Semua kolom harus diisi.");
     }
 }
 
@@ -68,13 +70,26 @@ function deleteProduct(productId) {
     }
 }
 
+function deleteSelectedProducts() {
+    const selectedProductIds = Array.from(document.querySelectorAll('input[name="product-checkbox"]:checked')).map(cb => parseInt(cb.value));
+    if (selectedProductIds.length === 0) {
+        alert("Harap pilih produk yang ingin dihapus.");
+        return;
+    }
+
+    products = products.filter(p => !selectedProductIds.includes(p.id));
+    updateProductList();
+    showNotification('Produk terpilih berhasil dihapus.');
+}
+
 function updateProductList() {
     const productList = document.getElementById('product-list');
     productList.innerHTML = '';
-    
+
     products.forEach((product) => {
         productList.innerHTML += `
             <div class="product-item">
+                <input type="checkbox" name="product-checkbox" value="${product.id}">
                 <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
                 <button onclick="editProduct(${product.id})">Edit</button>
                 <button onclick="deleteProduct(${product.id})">Hapus</button>
@@ -169,21 +184,26 @@ function updateTransactionStatus(transactionId, status) {
 function generateTransactionReport() {
     const report = {
         totalPending: transactions.filter(t => t.status === 'Pending').length,
-        totalPaid: transactions.filter(t => t.status === 'Lunas').length,
-        totalCanceled: transactions.filter(t => t.status === 'Dibatalkan').length,
-        totalRevenue: transactions.filter(t => t.status === 'Lunas').reduce((acc, t) => acc + t.total_price, 0)
+        totalCompleted: transactions.filter(t => t.status === 'Lunas').length,
+        totalCancelled: transactions.filter(t => t.status === 'Dibatalkan').length
     };
 
-    showNotification(`Laporan: \n- Pending: ${report.totalPending}\n- Lunas: ${report.totalPaid}\n- Dibatalkan: ${report.totalCanceled}\n- Pendapatan: Rp ${report.totalRevenue}`);
+    alert(`
+        Laporan Transaksi:
+        - Total Pending: ${report.totalPending}
+        - Total Lunas: ${report.totalCompleted}
+        - Total Dibatalkan: ${report.totalCancelled}
+    `);
 }
 
+// Filter Products
 function filterProductsByCategoryAndSupplier() {
-    const selectedCategory = parseInt(document.getElementById('filter-category-id').value);
-    const selectedSupplier = parseInt(document.getElementById('filter-supplier-id').value);
+    const selectedCategoryId = document.getElementById('filter-category-id').value;
+    const selectedSupplierId = document.getElementById('filter-supplier-id').value;
 
     const filteredProducts = products.filter(product => {
-        return (selectedCategory ? product.category_id === selectedCategory : true) &&
-               (selectedSupplier ? product.supplier_id === selectedSupplier : true);
+        return (selectedCategoryId === "" || product.category_id === parseInt(selectedCategoryId)) &&
+               (selectedSupplierId === "" || product.supplier_id === parseInt(selectedSupplierId));
     });
 
     displayFilteredProducts(filteredProducts);
@@ -192,98 +212,73 @@ function filterProductsByCategoryAndSupplier() {
 function displayFilteredProducts(filteredProducts) {
     const filteredProductList = document.getElementById('filtered-product-list');
     filteredProductList.innerHTML = '';
-
-    if (filteredProducts.length === 0) {
-        filteredProductList.innerHTML = '<p>Tidak ada produk yang ditemukan.</p>';
-    } else {
-        filteredProducts.forEach(product => {
-            filteredProductList.innerHTML += `
-                <div class="filtered-product-item">
-                    <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
-                </div>
-            `;
-        });
-    }
+    
+    filteredProducts.forEach(product => {
+        filteredProductList.innerHTML += `
+            <div class="filtered-product-item">
+                <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
+            </div>
+        `;
+    });
 }
 
-// Fungsi untuk menambahkan kategori baru
+// Category Management
 function addCategory(name) {
     if (!name) {
-        alert('Harap isi kolom nama kategori.');
+        alert('Harap isi kolom kategori.');
         return;
     }
 
-    const newCategory = {
-        id: Date.now(),
-        name: name
-    };
-
+    const newCategory = { id: Date.now(), name: name };
     categories.push(newCategory);
     updateCategorySelectOptions();
+    updateProductList();
     showNotification(`Kategori ${name} berhasil ditambahkan.`);
 }
 
-// Fungsi untuk menambahkan supplier baru
+function updateCategoryList() {
+    const categoryList = document.getElementById('category-list');
+    categoryList.innerHTML = '';
+
+    categories.forEach(category => {
+        categoryList.innerHTML += `
+            <div class="category-item">
+                <p>${category.name}</p>
+            </div>
+        `;
+    });
+}
+
+// Supplier Management
 function addSupplier(name) {
     if (!name) {
-        alert('Harap isi kolom nama supplier.');
+        alert('Harap isi kolom supplier.');
         return;
     }
 
-    const newSupplier = {
-        id: Date.now(),
-        name: name
-    };
-
+    const newSupplier = { id: Date.now(), name: name };
     suppliers.push(newSupplier);
     updateSupplierSelectOptions();
+    updateProductList();
     showNotification(`Supplier ${name} berhasil ditambahkan.`);
 }
 
-// Fungsi untuk mengedit kategori
-function editCategory(categoryId) {
-    const category = categories.find(c => c.id === categoryId);
-    const newName = prompt("Edit nama kategori:", category.name);
+function updateSupplierList() {
+    const supplierList = document.getElementById('supplier-list');
+    supplierList.innerHTML = '';
 
-    if (newName) {
-        category.name = newName;
-        updateCategorySelectOptions();
-        showNotification(`Kategori ${newName} berhasil diperbarui.`);
-    }
+    suppliers.forEach(supplier => {
+        supplierList.innerHTML += `
+            <div class="supplier-item">
+                <p>${supplier.name}</p>
+            </div>
+        `;
+    });
 }
 
-// Fungsi untuk menghapus kategori
-function deleteCategory(categoryId) {
-    categories = categories.filter(category => category.id !== categoryId);
-    updateCategorySelectOptions();
-    showNotification('Kategori berhasil dihapus.');
-}
-
-// Fungsi untuk mengedit supplier
-function editSupplier(supplierId) {
-    const supplier = suppliers.find(s => s.id === supplierId);
-    const newName = prompt("Edit nama supplier:", supplier.name);
-
-    if (newName) {
-        supplier.name = newName;
-        updateSupplierSelectOptions();
-        showNotification(`Supplier ${newName} berhasil diperbarui.`);
-    }
-}
-
-// Fungsi untuk menghapus supplier
-function deleteSupplier(supplierId) {
-    suppliers = suppliers.filter(supplier => supplier.id !== supplierId);
-    updateSupplierSelectOptions();
-    showNotification('Supplier berhasil dihapus.');
-}
-
-// Fungsi untuk menghapus produk
-function deleteProduct(productId) {
-    const productIndex = products.findIndex(p => p.id === productId);
-    if (productIndex > -1) {
-        products.splice(productIndex, 1);
-        updateProductList();
-        showNotification('Produk berhasil dihapus.');
-    }
-}
+// Initialize dropdown options
+updateProductList();
+updateCategorySelectOptions();
+updateSupplierSelectOptions();
+updateCategoryList();
+updateSupplierList();
