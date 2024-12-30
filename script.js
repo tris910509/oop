@@ -129,17 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Ubah status transaksi
-function changeTransactionStatus(transactionId, status) {
-    const transaction = transactions.find(t => t.id === transactionId);
-    if (transaction) {
-        transaction.status = status;
-        updateTransactionList();
-        showNotification(`Status transaksi berhasil diperbarui menjadi ${status}.`);
-    } else {
-        alert('Transaksi tidak ditemukan.');
-    }
-}
 
 // Filter Produk berdasarkan Kategori dan Supplier
 function filterProductsByCategoryAndSupplier() {
