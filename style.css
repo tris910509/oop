@@ -31,3 +31,14 @@ select {
     cursor: pointer;
 }
 
+
+.product-item, .filtered-product-item, .category-item, .supplier-item, .transaction-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+button {
+    margin-left: 10px;
+}
