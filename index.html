@@ -3,92 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Jasa dan Produk</title>
+    <title>Sistem Informasi Pelayanan Jasa dan Produk</title>
     <style>
-        .product-item, .filtered-product-item, .category-item, .supplier-item, .transaction-item {
+        .form-group {
             margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        button {
-            margin-left: 10px;
         }
     </style>
 </head>
 <body>
-    <section>
-        <h2>Tambah Produk Baru</h2>
-        <input type="text" id="product-name" placeholder="Nama Produk">
-        <input type="number" id="product-price" placeholder="Harga Produk">
-        <select id="product-category-id">
-            <option value="">Pilih Kategori</option>
-        </select>
-        <select id="product-supplier-id">
-            <option value="">Pilih Supplier</option>
-        </select>
-        <button onclick="addProduct(document.getElementById('product-name').value, document.getElementById('product-price').value, document.getElementById('product-category-id').value, document.getElementById('product-supplier-id').value)">Tambah Produk</button>
-    </section>
 
-    <section>
-        <h2>Daftar Produk</h2>
-        <div id="product-list"></div>
-    </section>
+    <h1>Sistem Informasi Pelayanan Jasa dan Produk</h1>
 
-    <section>
-        <h2>Filter Produk</h2>
-        <select id="filter-category-id" onchange="filterProductsByCategoryAndSupplier()">
-            <option value="">Pilih Kategori</option>
-        </select>
-        <select id="filter-supplier-id" onchange="filterProductsByCategoryAndSupplier()">
-            <option value="">Pilih Supplier</option>
-        </select>
-        <div id="filtered-product-list"></div>
-        <button onclick="filterProductsByCategoryAndSupplier()">Filter Produk</button>
-    </section>
+    <!-- Form Tambah Produk -->
+    <h2>Tambah Produk</h2>
+    <form id="product-form">
+        <div class="form-group">
+            <label for="product-name">Nama Produk:</label>
+            <input type="text" id="product-name" name="product-name" required>
+        </div>
+        <div class="form-group">
+            <label for="product-price">Harga:</label>
+            <input type="number" id="product-price" name="product-price" required>
+        </div>
+        <div class="form-group">
+            <label for="product-category-id">Kategori:</label>
+            <select id="product-category-id" name="product-category-id"></select>
+        </div>
+        <div class="form-group">
+            <label for="product-supplier-id">Supplier:</label>
+            <select id="product-supplier-id" name="product-supplier-id"></select>
+        </div>
+        <button type="button" onclick="addProduct()">Tambah Produk</button>
+    </form>
 
-    <section>
-        <h2>Tambah Kategori Baru</h2>
-        <input type="text" id="category-name" placeholder="Nama Kategori">
-        <button onclick="addCategory(document.getElementById('category-name').value)">Tambah Kategori</button>
-    </section>
+    <hr>
 
-    <section>
-        <h2>Daftar Kategori</h2>
-        <div id="category-list"></div>
-    </section>
+    <!-- List Produk -->
+    <h2>Daftar Produk</h2>
+    <div id="product-list"></div>
+    <button onclick="deleteSelectedProducts()">Hapus Terpilih</button>
 
-    <section>
-        <h2>Tambah Supplier Baru</h2>
-        <input type="text" id="supplier-name" placeholder="Nama Supplier">
-        <button onclick="addSupplier(document.getElementById('supplier-name').value)">Tambah Supplier</button>
-    </section>
+    <hr>
 
-    <section>
-        <h2>Daftar Supplier</h2>
-        <div id="supplier-list"></div>
-    </section>
+    <!-- Form Tambah Transaksi -->
+    <h2>Tambah Transaksi</h2>
+    <form id="transaction-form">
+        <div class="form-group">
+            <label for="transaction-customer-name">Nama Pelanggan:</label>
+            <input type="text" id="transaction-customer-name" name="transaction-customer-name" required>
+        </div>
+        <div class="form-group">
+            <label for="transaction-product-id">Produk:</label>
+            <select id="transaction-product-id" name="transaction-product-id"></select>
+        </div>
+        <div class="form-group">
+            <label for="transaction-quantity">Jumlah:</label>
+            <input type="number" id="transaction-quantity" name="transaction-quantity" required>
+        </div>
+        <button type="button" onclick="addTransaction()">Tambah Transaksi</button>
+    </form>
 
-    <section>
-        <h2>Tambah Transaksi Baru</h2>
-        <input type="text" id="customer-name" placeholder="Nama Pelanggan">
-        <select id="product-id">
-            <option value="">Pilih Produk</option>
-        </select>
-        <input type="number" id="quantity" placeholder="Jumlah">
-        <button onclick="addTransaction(document.getElementById('customer-name').value, document.getElementById('product-id').value, document.getElementById('quantity').value)">Tambah Transaksi</button>
-    </section>
+    <hr>
 
-    <section>
-        <h2>Daftar Transaksi</h2>
-        <div id="transaction-list"></div>
-    </section>
+    <!-- List Transaksi -->
+    <h2>Daftar Transaksi</h2>
+    <div id="transaction-list"></div>
 
-    <section>
-        <h2>Laporan Transaksi</h2>
-        <button onclick="generateTransactionReport()">Generate Laporan</button>
-    </section>
+    <hr>
+
+    <!-- Form Filter Produk -->
+    <h2>Filter Produk</h2>
+    <div class="form-group">
+        <label for="filter-category-id">Filter berdasarkan Kategori:</label>
+        <select id="filter-category-id" onchange="filterProductsByCategoryAndSupplier()"></select>
+    </div>
+    <div class="form-group">
+        <label for="filter-supplier-id">Filter berdasarkan Supplier:</label>
+        <select id="filter-supplier-id" onchange="filterProductsByCategoryAndSupplier()"></select>
+    </div>
+    <div id="filtered-product-list"></div>
+
+    <hr>
+
+    <!-- Form Tambah Kategori -->
+    <h2>Tambah Kategori</h2>
+    <form id="category-form">
+        <div class="form-group">
+            <label for="category-name">Nama Kategori:</label>
+            <input type="text" id="category-name" name="category-name" required>
+        </div>
+        <button type="button" onclick="addCategory()">Tambah Kategori</button>
+    </form>
+
+    <hr>
+
+    <!-- List Kategori -->
+    <h2>Daftar Kategori</h2>
+    <div id="category-list"></div>
+
+    <hr>
+
+    <!-- Form Tambah Supplier -->
+    <h2>Tambah Supplier</h2>
+    <form id="supplier-form">
+        <div class="form-group">
+            <label for="supplier-name">Nama Supplier:</label>
+            <input type="text" id="supplier-name" name="supplier-name" required>
+        </div>
+        <button type="button" onclick="addSupplier()">Tambah Supplier</button>
+    </form>
+
+    <hr>
+
+    <!-- List Supplier -->
+    <h2>Daftar Supplier</h2>
+    <div id="supplier-list"></div>
+
+    <hr>
+
+    <!-- Generate Laporan -->
+    <button onclick="generateTransactionReport()">Generate Laporan Transaksi</button>
 
     <script src="app.js"></script>
 </body>
