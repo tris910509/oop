@@ -1,76 +1,95 @@
-// Mendapatkan elemen DOM
-const productForm = document.getElementById('product-form');
-const productName = document.getElementById('product-name');
-const productPrice = document.getElementById('product-price');
-const productQuantity = document.getElementById('product-quantity');
-const productList = document.getElementById('product-list').getElementsByTagName('tbody')[0];
-const totalAmount = document.getElementById('total-amount');
+// Array untuk menyimpan produk
+let products = [];
 
-// Memuat data produk dari localStorage
-let products = JSON.parse(localStorage.getItem('products')) || [];
-
-// Fungsi untuk menyimpan data produk ke localStorage
-function saveProducts() {
-    localStorage.setItem('products', JSON.stringify(products));
-}
-
-// Fungsi untuk menampilkan daftar produk
-function renderProducts() {
+// Fungsi untuk menampilkan produk
+function displayProducts() {
+    const productList = document.getElementById('product-list');
     productList.innerHTML = '';
-    let total = 0;
+    
+    if (products.length === 0) {
+        productList.innerHTML = '<p>Tidak ada produk.</p>';
+        return;
+    }
+    
     products.forEach((product, index) => {
-        const row = productList.insertRow();
-        row.innerHTML = `
-            <td>${product.name}</td>
-            <td>Rp ${product.price.toLocaleString()}</td>
-            <td>${product.quantity}</td>
-            <td>Rp ${(product.price * product.quantity).toLocaleString()}</td>
-            <td>
+        productList.innerHTML += `
+            <div class="product-item">
+                <h3>${product.name}</h3>
+                <p>${product.description}</p>
+                <p>Harga: Rp ${product.price}</p>
                 <button onclick="editProduct(${index})">Edit</button>
                 <button onclick="deleteProduct(${index})">Hapus</button>
-            </td>
+            </div>
         `;
-        total += product.price * product.quantity;
     });
-    totalAmount.textContent = total.toLocaleString();
 }
 
 // Fungsi untuk menambah produk
-function addProduct(name, price, quantity) {
-    products.push({ name, price, quantity });
-    saveProducts();
-    renderProducts();
+function addProduct(product) {
+    products.push(product);
+    displayProducts();
 }
 
-// Fungsi untuk mengedit produk
+// Fungsi untuk edit produk
 function editProduct(index) {
     const product = products[index];
-    productName.value = product.name;
-    productPrice.value = product.price;
-    productQuantity.value = product.quantity;
-    productForm.onsubmit = (e) => {
-        e.preventDefault();
-        product.name = productName.value;
-        product.price = parseFloat(productPrice.value);
-        product.quantity = parseInt(productQuantity.value);
-        saveProducts();
-        renderProducts();
-        productForm.onsubmit = addProductHandler;
-        productForm.reset();
+    
+    document.getElementById('product-name').value = product.name;
+    document.getElementById('product-description').value = product.description;
+    document.getElementById('product-price').value = product.price;
+    
+    document.getElementById('product-form').classList.remove('hidden');
+    document.getElementById('add-product-btn').style.display = 'none';
+    
+    document.getElementById('form').onsubmit = (event) => {
+        event.preventDefault();
+        
+        products[index] = {
+            name: document.getElementById('product-name').value,
+            description: document.getElementById('product-description').value,
+            price: parseFloat(document.getElementById('product-price').value)
+        };
+        
+        displayProducts();
+        cancelForm();
     };
 }
 
-// Fungsi untuk menghapus produk
+// Fungsi untuk hapus produk
 function deleteProduct(index) {
     products.splice(index, 1);
-    saveProducts();
-    renderProducts();
+    displayProducts();
 }
 
-// Event listener untuk form tambah produk
-productForm.onsubmit = (e) => {
-    e.preventDefault();
-    addProduct(
-        productName.value,
+// Fungsi untuk menampilkan form
+document.getElementById('add-product-btn').addEventListener('click', () => {
+    document.getElementById('product-form').classList.remove('hidden');
+    document.getElementById('add-product-btn').style.display = 'none';
+});
 
-::contentReference[oaicite:0]{index=0}
+// Fungsi untuk membatalkan form
+function cancelForm() {
+    document.getElementById('product-name').value = '';
+    document.getElementById('product-description').value = '';
+    document.getElementById('product-price').value = '';
+    
+    document.getElementById('product-form').classList.add('hidden');
+    document.getElementById('add-product-btn').style.display = 'block';
+}
+
+// Fungsi submit form
+document.getElementById('form').onsubmit = (event) => {
+    event.preventDefault();
+    
+    const product = {
+        name: document.getElementById('product-name').value,
+        description: document.getElementById('product-description').value,
+        price: parseFloat(document.getElementById('product-price').value)
+    };
+    
+    addProduct(product);
+    cancelForm();
+};
+
+// Tampilkan produk saat halaman dimuat
+displayProducts();
