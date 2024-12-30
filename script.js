@@ -50,7 +50,7 @@ function updateProductList() {
 
 // Fungsi untuk memperbarui opsi produk dalam dropdown
 function updateProductSelectOptions() {
-    const productSelect = document.getElementById('transaction-product-id');
+    const productSelect = document.getElementById('product-list');
     productSelect.innerHTML = '<option value="">Pilih Produk</option>'; // Default option
 
     products.forEach(product => {
