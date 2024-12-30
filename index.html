@@ -1,38 +1,35 @@
 <!DOCTYPE html>
-<html lang="id-ID">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Point of Sale</title>
+    <title>Sistem CRUD Produk Tanpa Database</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Aplikasi Point of Sale</h1>
-        <form id="product-form">
-            <input type="text" id="product-name" placeholder="Nama Produk" required>
-            <input type="number" id="product-price" placeholder="Harga" required>
-            <input type="number" id="product-quantity" placeholder="Jumlah" required>
-            <button type="submit">Tambah Produk</button>
-        </form>
-        <table id="product-list">
-            <thead>
-                <tr>
-                    <th>Nama Produk</th>
-                    <th>Harga</th>
-                    <th>Jumlah</th>
-                    <th>Total</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Daftar produk akan ditampilkan di sini -->
-            </tbody>
-        </table>
-        <div id="total">
-            <p>Total: Rp <span id="total-amount">0</span></p>
+
+    <header>
+        <h1>CRUD Produk Tanpa Database</h1>
+        <button id="add-product-btn">Tambah Produk</button>
+    </header>
+
+    <main>
+        <h2>Daftar Produk</h2>
+        <div id="product-list"></div>
+
+        <!-- Form Tambah Produk -->
+        <div id="product-form" class="hidden">
+            <h3>Tambah Produk</h3>
+            <form id="form">
+                <input type="text" id="product-name" placeholder="Nama Produk" required>
+                <input type="text" id="product-description" placeholder="Deskripsi" required>
+                <input type="number" id="product-price" placeholder="Harga" required>
+                <button type="submit">Simpan</button>
+                <button type="button" id="cancel-btn">Batal</button>
+            </form>
         </div>
-    </div>
-    <script src="app.js"></script>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
