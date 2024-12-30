@@ -1,340 +1,214 @@
-// Data
-const users = [];
-const categories = [];
-const suppliers = [];
-const products = [];
-const transactions = [];
+// Data Simulasi
+let categories = [];
+let products = [];
+let suppliers = [];
+let transactions = [];
+let users = [];
 
-// Tambah Pengguna
-document.getElementById('userForm').addEventListener('submit', function(e) {
+// Fungsi Tambah Kategori
+document.getElementById("categoryForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    const name = document.getElementById('userName').value.trim();
-    const password = document.getElementById('userPassword').value.trim();
-    const role = document.getElementById('userRole').value;
-
-    if (name && password) {
-        users.push({ name, password, role });
-        renderUsers();
-        document.getElementById('userForm').reset();
+    const categoryName = document.getElementById("categoryName").value.trim();
+    if (categoryName) {
+        categories.push({ name: categoryName });
+        document.getElementById("categoryName").value = "";
+        updateCategoryTable();
+        populateCategoryDropdown();
+        alert("Kategori berhasil ditambahkan!");
     } else {
-        alert('Nama dan password harus diisi!');
+        alert("Nama kategori tidak boleh kosong.");
     }
 });
 
-// Render Pengguna
-function renderUsers() {
-    const tbody = document.getElementById('userTable').querySelector('tbody');
-    tbody.innerHTML = '';
-    users.forEach((user, index) => {
-        const row = `
-            <tr>
-                <td>${user.name}</td>
-                <td>${user.role}</td>
-                <td><button onclick="deleteUser(${index})">Hapus</button></td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
+// Fungsi Menampilkan Kategori
+function updateCategoryTable() {
+    const categoryTable = document.getElementById("categoryTable");
+    categoryTable.innerHTML = categories
+        .map(
+            (category, index) => `
+        <tr>
+            <td>${category.name}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteCategory(${index})">Hapus</button>
+            </td>
+        </tr>`
+        )
+        .join("");
 }
 
-// Hapus Pengguna
-function deleteUser(index) {
-    users.splice(index, 1);
-    renderUsers();
-}
-
-// Tambah Kategori
-document.getElementById('categoryForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('categoryName').value.trim();
-
-    if (name) {
-        categories.push({ name });
-        renderCategories();
-        document.getElementById('categoryForm').reset();
-    } else {
-        alert('Nama kategori harus diisi!');
-    }
-});
-
-// Render Kategori
-function renderCategories() {
-    const tbody = document.getElementById('categoryTable').querySelector('tbody');
-    tbody.innerHTML = '';
-    categories.forEach((category, index) => {
-        const row = `
-            <tr>
-                <td>${category.name}</td>
-                <td><button onclick="deleteCategory(${index})">Hapus</button></td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
-}
-
-// Hapus Kategori
+// Fungsi Menghapus Kategori
 function deleteCategory(index) {
     categories.splice(index, 1);
-    renderCategories();
+    updateCategoryTable();
+    populateCategoryDropdown();
+    alert("Kategori berhasil dihapus.");
 }
 
-// Tambah Supplier
-document.getElementById('supplierForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('supplierName').value.trim();
-    const contact = document.getElementById('supplierContact').value.trim();
-
-    if (name && contact) {
-        suppliers.push({ name, contact });
-        renderSuppliers();
-        document.getElementById('supplierForm').reset();
-    } else {
-        alert('Nama dan kontak supplier harus diisi!');
-    }
-});
-
-// Render Supplier
-function renderSuppliers() {
-    const tbody = document.getElementById('supplierTable').querySelector('tbody');
-    tbody.innerHTML = '';
-    suppliers.forEach((supplier, index) => {
-        const row = `
-            <tr>
-                <td>${supplier.name}</td>
-                <td>${supplier.contact}</td>
-                <td><button onclick="deleteSupplier(${index})">Hapus</button></td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
+// Fungsi Populasi Dropdown Kategori
+function populateCategoryDropdown() {
+    const categoryDropdown = document.getElementById("productCategory");
+    categoryDropdown.innerHTML = '<option value="" disabled selected>Pilih kategori</option>';
+    categories.forEach((category) => {
+        categoryDropdown.innerHTML += `<option value="${category.name}">${category.name}</option>`;
     });
 }
 
-// Hapus Supplier
-function deleteSupplier(index) {
-    suppliers.splice(index, 1);
-    renderSuppliers();
-}
-
-// Tambah Produk
-document.getElementById('productForm').addEventListener('submit', function(e) {
+// Fungsi Tambah Produk
+document.getElementById("productForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    const name = document.getElementById('productName').value.trim();
-    const category = document.getElementById('productCategory').value;
-    const price = parseFloat(document.getElementById('productPrice').value.trim());
-    const stock = parseInt(document.getElementById('productStock').value.trim());
-    const description = document.getElementById('productDescription').value.trim();
+    const productName = document.getElementById("productName").value.trim();
+    const productCategory = document.getElementById("productCategory").value;
+    const productPrice = parseFloat(document.getElementById("productPrice").value);
+    const productStock = parseInt(document.getElementById("productStock").value, 10);
+    const productDescription = document.getElementById("productDescription").value.trim();
 
-    if (name && category && !isNaN(price) && !isNaN(stock)) {
-        products.push({ name, category, price, stock, description });
-        renderProducts();
-        document.getElementById('productForm').reset();
+    if (productName && productCategory && productPrice > 0 && productStock >= 0) {
+        products.push({
+            name: productName,
+            category: productCategory,
+            price: productPrice,
+            stock: productStock,
+            description: productDescription,
+        });
+        updateProductTable();
+        document.getElementById("productForm").reset();
+        alert("Produk berhasil ditambahkan!");
     } else {
-        alert('Semua field harus diisi dengan benar!');
+        alert("Mohon lengkapi semua data produk.");
     }
 });
 
-// Render Produk
-function renderProducts() {
-    const tbody = document.getElementById('productTable').querySelector('tbody');
-    tbody.innerHTML = '';
-    products.forEach((product, index) => {
-        const row = `
-            <tr>
-                <td>${product.name}</td>
-                <td>${product.category}</td>
-                <td>${product.price}</td>
-                <td>${product.stock}</td>
-                <td>${product.description}</td>
-                <td><button onclick="deleteProduct(${index})">Hapus</button></td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
+// Fungsi Menampilkan Produk
+function updateProductTable() {
+    const productTable = document.getElementById("productTable");
+    productTable.innerHTML = products
+        .map(
+            (product, index) => `
+        <tr>
+            <td>${product.name}</td>
+            <td>${product.category}</td>
+            <td>${product.price}</td>
+            <td>${product.stock}</td>
+            <td>${product.description}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">Hapus</button>
+            </td>
+        </tr>`
+        )
+        .join("");
 }
 
-// Hapus Produk
+// Fungsi Menghapus Produk
 function deleteProduct(index) {
     products.splice(index, 1);
-    renderProducts();
+    updateProductTable();
+    alert("Produk berhasil dihapus.");
 }
 
-// Tambah Transaksi
-document.getElementById('transactionForm').addEventListener('submit', function(e) {
+// Fungsi Tambah Supplier
+document.getElementById("supplierForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    const productName = document.getElementById('transactionProduct').value.trim();
-    const quantity = parseInt(document.getElementById('transactionQuantity').value.trim());
-    const customerName = document.getElementById('transactionCustomer').value.trim();
-    const paymentStatus = document.querySelector('input[name="paymentStatus"]:checked').value;
-
-    if (productName && !isNaN(quantity) && quantity > 0 && customerName) {
-        const product = products.find(p => p.name === productName);
-        if (product && product.stock >= quantity) {
-            transactions.push({
-                product: productName,
-                quantity,
-                customer: customerName,
-                totalPrice: product.price * quantity,
-                paymentStatus
-            });
-            product.stock -= quantity;
-            renderTransactions();
-            renderProducts();
-            document.getElementById('transactionForm').reset();
-        } else {
-            alert('Stok produk tidak mencukupi atau input tidak valid.');
-        }
+    const supplierName = document.getElementById("supplierName").value.trim();
+    const supplierContact = document.getElementById("supplierContact").value.trim();
+    if (supplierName && supplierContact) {
+        suppliers.push({ name: supplierName, contact: supplierContact });
+        document.getElementById("supplierForm").reset();
+        updateSupplierTable();
+        alert("Supplier berhasil ditambahkan!");
     } else {
-        alert('Semua field transaksi harus diisi dengan benar!');
+        alert("Mohon lengkapi semua data supplier.");
     }
 });
 
-// Render Transaksi
-function renderTransactions() {
-    const tbody = document.getElementById('transactionTable').querySelector('tbody');
-    tbody.innerHTML = '';
-    transactions.forEach((transaction, index) => {
-        const row = `
-            <tr>
-                <td>${transaction.product}</td>
-                <td>${transaction.quantity}</td>
-                <td>${transaction.customer}</td>
-                <td>${transaction.totalPrice}</td>
-                <td>${transaction.paymentStatus}</td>
-                <td><button onclick="deleteTransaction(${index})">Hapus</button></td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
+// Fungsi Menampilkan Supplier
+function updateSupplierTable() {
+    const supplierTable = document.getElementById("supplierTable");
+    supplierTable.innerHTML = suppliers
+        .map(
+            (supplier, index) => `
+        <tr>
+            <td>${supplier.name}</td>
+            <td>${supplier.contact}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteSupplier(${index})">Hapus</button>
+            </td>
+        </tr>`
+        )
+        .join("");
 }
 
-// Hapus Transaksi
+// Fungsi Menghapus Supplier
+function deleteSupplier(index) {
+    suppliers.splice(index, 1);
+    updateSupplierTable();
+    alert("Supplier berhasil dihapus.");
+}
+
+// Fungsi Tambah Transaksi
+document.getElementById("transactionForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const transactionProduct = document.getElementById("transactionProduct").value;
+    const transactionQuantity = parseInt(document.getElementById("transactionQuantity").value, 10);
+    const transactionCustomer = document.getElementById("transactionCustomer").value.trim();
+    const paymentStatus = document.querySelector('input[name="paymentStatus"]:checked').value;
+
+    const product = products.find((prod) => prod.name === transactionProduct);
+
+    if (transactionProduct && transactionQuantity > 0 && product.stock >= transactionQuantity) {
+        const totalPrice = product.price * transactionQuantity;
+        transactions.push({
+            product: transactionProduct,
+            quantity: transactionQuantity,
+            customer: transactionCustomer,
+            totalPrice: totalPrice,
+            paymentStatus: paymentStatus,
+            date: new Date().toISOString().split("T")[0],
+        });
+        product.stock -= transactionQuantity;
+        updateTransactionTable();
+        updateProductTable();
+        alert("Transaksi berhasil ditambahkan!");
+    } else {
+        alert("Stok tidak mencukupi atau data tidak valid.");
+    }
+});
+
+// Fungsi Menampilkan Transaksi
+function updateTransactionTable() {
+    const transactionTable = document.getElementById("transactionTable");
+    transactionTable.innerHTML = transactions
+        .map(
+            (transaction, index) => `
+        <tr>
+            <td>${transaction.product}</td>
+            <td>${transaction.quantity}</td>
+            <td>${transaction.customer}</td>
+            <td>${transaction.totalPrice}</td>
+            <td>${transaction.paymentStatus}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${index})">Hapus</button>
+            </td>
+        </tr>`
+        )
+        .join("");
+}
+
+// Fungsi Menghapus Transaksi
 function deleteTransaction(index) {
     const transaction = transactions[index];
-    const product = products.find(p => p.name === transaction.product);
+    const product = products.find((prod) => prod.name === transaction.product);
     if (product) {
         product.stock += transaction.quantity;
     }
     transactions.splice(index, 1);
-    renderTransactions();
-    renderProducts();
+    updateTransactionTable();
+    updateProductTable();
+    alert("Transaksi berhasil dihapus.");
 }
 
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Populate product options in transaction form
-    const productSelect = document.getElementById('transactionProduct');
-    products.forEach(product => {
-        productSelect.innerHTML += `<option value="${product.name}">${product.name} - ${product.price} (Stok: ${product.stock})</option>`;
-    });
-});
-
-
-
-
-function generateReport() {
-    const startDate = document.getElementById('reportStartDate').value;
-    const endDate = document.getElementById('reportEndDate').value;
-    const filteredTransactions = transactions.filter(transaction => {
-        return new Date(transaction.date) >= new Date(startDate) && new Date(transaction.date) <= new Date(endDate);
-    });
-
-    let reportHtml = `
-        <h2>Laporan Transaksi</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th>Jumlah</th>
-                    <th>Pelanggan</th>
-                    <th>Total Harga</th>
-                    <th>Status Pembayaran</th>
-                    <th>Tanggal</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    filteredTransactions.forEach(transaction => {
-        reportHtml += `
-            <tr>
-                <td>${transaction.product}</td>
-                <td>${transaction.quantity}</td>
-                <td>${transaction.customer}</td>
-                <td>${transaction.totalPrice}</td>
-                <td>${transaction.paymentStatus}</td>
-                <td>${transaction.date}</td>
-            </tr>
-        `;
-    });
-
-    reportHtml += `</tbody></table>`;
-
-    document.getElementById('reportContainer').innerHTML = reportHtml;
-}
-
-
-
-
-// Populate Kategori, Produk, Supplier
-function populateDropdowns() {
-    const categorySelect = document.getElementById('productCategory');
-    const transactionProductSelect = document.getElementById('transactionProduct');
-
-    categories.forEach(category => {
-        const option = `<option value="${category.name}">${category.name}</option>`;
-        categorySelect.innerHTML += option;
-        transactionProductSelect.innerHTML += option;
-    });
-}
-
-// Menampilkan Laporan
-document.getElementById('reportForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    generateReport();
-});
-
-// Fungsi Generasi Laporan
-function generateReport() {
-    const startDate = document.getElementById('reportStartDate').value;
-    const endDate = document.getElementById('reportEndDate').value;
-    const filteredTransactions = transactions.filter(transaction => {
-        return new Date(transaction.date) >= new Date(startDate) && new Date(transaction.date) <= new Date(endDate);
-    });
-
-    let reportHtml = `
-        <h4>Laporan Transaksi (${startDate} - ${endDate})</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th>Jumlah</th>
-                    <th>Pelanggan</th>
-                    <th>Total Harga</th>
-                    <th>Status Pembayaran</th>
-                    <th>Tanggal</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    filteredTransactions.forEach(transaction => {
-        reportHtml += `
-            <tr>
-                <td>${transaction.product}</td>
-                <td>${transaction.quantity}</td>
-                <td>${transaction.customer}</td>
-                <td>${transaction.totalPrice}</td>
-                <td>${transaction.paymentStatus}</td>
-                <td>${transaction.date}</td>
-            </tr>
-        `;
-    });
-
-    reportHtml += `</tbody></table>`;
-
-    document.getElementById('reportContainer').innerHTML = reportHtml;
-}
-
-// Tampilkan Form Penjualan dan Produk sesuai data Dropdown
-populateDropdowns();
+// Inisialisasi
+populateCategoryDropdown();
+updateCategoryTable();
+updateProductTable();
+updateSupplierTable();
+updateTransactionTable();
