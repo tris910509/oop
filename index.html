@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Informasi Pelayanan Jasa dan Produk</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .form-group {
             margin-bottom: 15px;
@@ -12,118 +13,122 @@
 </head>
 <body>
 
-    <h1>Sistem Informasi Pelayanan Jasa dan Produk</h1>
+    <div class="container mt-4">
+        <h1 class="text-center">Sistem Informasi Pelayanan Jasa dan Produk</h1>
 
-    <!-- Form Tambah Produk -->
-    <h2>Tambah Produk</h2>
-    <form id="product-form">
+        <!-- Form Tambah Produk -->
+        <h2 class="mt-4">Tambah Produk</h2>
+        <form id="product-form">
+            <div class="form-group">
+                <label for="product-name">Nama Produk:</label>
+                <input type="text" id="product-name" name="product-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="product-price">Harga:</label>
+                <input type="number" id="product-price" name="product-price" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="product-category-id">Kategori:</label>
+                <select id="product-category-id" name="product-category-id" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label for="product-supplier-id">Supplier:</label>
+                <select id="product-supplier-id" name="product-supplier-id" class="form-control"></select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addProduct()">Tambah Produk</button>
+        </form>
+
+        <hr>
+
+        <!-- List Produk -->
+        <h2>Daftar Produk</h2>
+        <div id="product-list"></div>
+        <button class="btn btn-danger mt-3" onclick="deleteSelectedProducts()">Hapus Terpilih</button>
+
+        <hr>
+
+        <!-- Form Tambah Transaksi -->
+        <h2>Tambah Transaksi</h2>
+        <form id="transaction-form">
+            <div class="form-group">
+                <label for="transaction-customer-name">Nama Pelanggan:</label>
+                <input type="text" id="transaction-customer-name" name="transaction-customer-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="transaction-product-id">Produk:</label>
+                <select id="transaction-product-id" name="transaction-product-id" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label for="transaction-quantity">Jumlah:</label>
+                <input type="number" id="transaction-quantity" name="transaction-quantity" class="form-control" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addTransaction()">Tambah Transaksi</button>
+        </form>
+
+        <hr>
+
+        <!-- List Transaksi -->
+        <h2>Daftar Transaksi</h2>
+        <div id="transaction-list"></div>
+
+        <hr>
+
+        <!-- Form Filter Produk -->
+        <h2>Filter Produk</h2>
         <div class="form-group">
-            <label for="product-name">Nama Produk:</label>
-            <input type="text" id="product-name" name="product-name" required>
+            <label for="filter-category-id">Filter berdasarkan Kategori:</label>
+            <select id="filter-category-id" class="form-control" onchange="filterProductsByCategoryAndSupplier()"></select>
         </div>
         <div class="form-group">
-            <label for="product-price">Harga:</label>
-            <input type="number" id="product-price" name="product-price" required>
+            <label for="filter-supplier-id">Filter berdasarkan Supplier:</label>
+            <select id="filter-supplier-id" class="form-control" onchange="filterProductsByCategoryAndSupplier()"></select>
         </div>
-        <div class="form-group">
-            <label for="product-category-id">Kategori:</label>
-            <select id="product-category-id" name="product-category-id"></select>
-        </div>
-        <div class="form-group">
-            <label for="product-supplier-id">Supplier:</label>
-            <select id="product-supplier-id" name="product-supplier-id"></select>
-        </div>
-        <button type="button" onclick="addProduct()">Tambah Produk</button>
-    </form>
+        <div id="filtered-product-list"></div>
 
-    <hr>
+        <hr>
 
-    <!-- List Produk -->
-    <h2>Daftar Produk</h2>
-    <div id="product-list"></div>
-    <button onclick="deleteSelectedProducts()">Hapus Terpilih</button>
+        <!-- Form Tambah Kategori -->
+        <h2>Tambah Kategori</h2>
+        <form id="category-form">
+            <div class="form-group">
+                <label for="category-name">Nama Kategori:</label>
+                <input type="text" id="category-name" name="category-name" class="form-control" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addCategory()">Tambah Kategori</button>
+        </form>
 
-    <hr>
+        <hr>
 
-    <!-- Form Tambah Transaksi -->
-    <h2>Tambah Transaksi</h2>
-    <form id="transaction-form">
-        <div class="form-group">
-            <label for="transaction-customer-name">Nama Pelanggan:</label>
-            <input type="text" id="transaction-customer-name" name="transaction-customer-name" required>
-        </div>
-        <div class="form-group">
-            <label for="transaction-product-id">Produk:</label>
-            <select id="transaction-product-id" name="transaction-product-id"></select>
-        </div>
-        <div class="form-group">
-            <label for="transaction-quantity">Jumlah:</label>
-            <input type="number" id="transaction-quantity" name="transaction-quantity" required>
-        </div>
-        <button type="button" onclick="addTransaction()">Tambah Transaksi</button>
-    </form>
+        <!-- List Kategori -->
+        <h2>Daftar Kategori</h2>
+        <div id="category-list"></div>
 
-    <hr>
+        <hr>
 
-    <!-- List Transaksi -->
-    <h2>Daftar Transaksi</h2>
-    <div id="transaction-list"></div>
+        <!-- Form Tambah Supplier -->
+        <h2>Tambah Supplier</h2>
+        <form id="supplier-form">
+            <div class="form-group">
+                <label for="supplier-name">Nama Supplier:</label>
+                <input type="text" id="supplier-name" name="supplier-name" class="form-control" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addSupplier()">Tambah Supplier</button>
+        </form>
 
-    <hr>
+        <hr>
 
-    <!-- Form Filter Produk -->
-    <h2>Filter Produk</h2>
-    <div class="form-group">
-        <label for="filter-category-id">Filter berdasarkan Kategori:</label>
-        <select id="filter-category-id" onchange="filterProductsByCategoryAndSupplier()"></select>
+        <!-- List Supplier -->
+        <h2>Daftar Supplier</h2>
+        <div id="supplier-list"></div>
+
+        <hr>
+
+        <!-- Generate Laporan -->
+        <button class="btn btn-success" onclick="generateTransactionReport()">Generate Laporan Transaksi</button>
     </div>
-    <div class="form-group">
-        <label for="filter-supplier-id">Filter berdasarkan Supplier:</label>
-        <select id="filter-supplier-id" onchange="filterProductsByCategoryAndSupplier()"></select>
-    </div>
-    <div id="filtered-product-list"></div>
 
-    <hr>
-
-    <!-- Form Tambah Kategori -->
-    <h2>Tambah Kategori</h2>
-    <form id="category-form">
-        <div class="form-group">
-            <label for="category-name">Nama Kategori:</label>
-            <input type="text" id="category-name" name="category-name" required>
-        </div>
-        <button type="button" onclick="addCategory()">Tambah Kategori</button>
-    </form>
-
-    <hr>
-
-    <!-- List Kategori -->
-    <h2>Daftar Kategori</h2>
-    <div id="category-list"></div>
-
-    <hr>
-
-    <!-- Form Tambah Supplier -->
-    <h2>Tambah Supplier</h2>
-    <form id="supplier-form">
-        <div class="form-group">
-            <label for="supplier-name">Nama Supplier:</label>
-            <input type="text" id="supplier-name" name="supplier-name" required>
-        </div>
-        <button type="button" onclick="addSupplier()">Tambah Supplier</button>
-    </form>
-
-    <hr>
-
-    <!-- List Supplier -->
-    <h2>Daftar Supplier</h2>
-    <div id="supplier-list"></div>
-
-    <hr>
-
-    <!-- Generate Laporan -->
-    <button onclick="generateTransactionReport()">Generate Laporan Transaksi</button>
-
-    <script src="app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
