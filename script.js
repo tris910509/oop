@@ -1,29 +1,15 @@
-let products = [
-    { id: 1, name: "Produk A", price: 1000, category_id: 1, supplier_id: 1 },
-    { id: 2, name: "Produk B", price: 2000, category_id: 1, supplier_id: 2 },
-    // Produk lainnya...
-];
-
-let categories = [
-    { id: 1, name: "Kategori A" },
-    { id: 2, name: "Kategori B" },
-    // Kategori lainnya...
-];
-
-let suppliers = [
-    { id: 1, name: "Supplier A" },
-    { id: 2, name: "Supplier B" },
-    // Supplier lainnya...
-];
-
+// Simpan produk, transaksi, kategori, dan supplier
+let products = [];
 let transactions = [];
+let categories = [];
+let suppliers = [];
 
 // Fungsi untuk menampilkan notifikasi
 function showNotification(message) {
     alert(message);
 }
 
-// Produk Management
+// Tambahkan Produk
 function addProduct() {
     const name = document.getElementById('product-name').value;
     const price = document.getElementById('product-price').value;
@@ -31,7 +17,7 @@ function addProduct() {
     const supplierId = document.getElementById('product-supplier-id').value;
 
     if (!name || !price || !categoryId || !supplierId) {
-        alert("Harap isi semua kolom produk.");
+        alert('Harap isi semua kolom produk.');
         return;
     }
 
@@ -45,54 +31,10 @@ function addProduct() {
 
     products.push(newProduct);
     updateProductList();
-    showNotification(`Produk ${name} berhasil ditambahkan.`);
+    showNotification('Produk berhasil ditambahkan.');
 }
 
-function editProduct(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) {
-        alert('Produk tidak ditemukan.');
-        return;
-    }
-
-    const newName = prompt("Edit nama produk:", product.name);
-    const newPrice = prompt("Edit harga produk:", product.price);
-    const newCategoryId = prompt("Edit kategori produk:", product.category_id);
-    const newSupplierId = prompt("Edit supplier produk:", product.supplier_id);
-
-    if (newName && newPrice && newCategoryId && newSupplierId) {
-        product.name = newName;
-        product.price = parseFloat(newPrice);
-        product.category_id = parseInt(newCategoryId);
-        product.supplier_id = parseInt(newSupplierId);
-        updateProductList();
-        showNotification(`Produk ${newName} berhasil diperbarui.`);
-    } else {
-        alert("Semua kolom harus diisi.");
-    }
-}
-
-function deleteProduct(productId) {
-    const productIndex = products.findIndex(p => p.id === productId);
-    if (productIndex > -1) {
-        products.splice(productIndex, 1);
-        updateProductList();
-        showNotification('Produk berhasil dihapus.');
-    }
-}
-
-function deleteSelectedProducts() {
-    const selectedProductIds = Array.from(document.querySelectorAll('input[name="product-checkbox"]:checked')).map(cb => parseInt(cb.value));
-    if (selectedProductIds.length === 0) {
-        alert("Harap pilih produk yang ingin dihapus.");
-        return;
-    }
-
-    products = products.filter(p => !selectedProductIds.includes(p.id));
-    updateProductList();
-    showNotification('Produk terpilih berhasil dihapus.');
-}
-
+// Perbarui daftar produk
 function updateProductList() {
     const productList = document.getElementById('product-list');
     productList.innerHTML = '';
@@ -100,18 +42,13 @@ function updateProductList() {
     products.forEach(product => {
         productList.innerHTML += `
             <div class="product-item">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="product-checkbox" value="${product.id}">
-                    <label class="form-check-label">${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</label>
-                </div>
-                <button class="btn btn-warning btn-sm ml-2" onclick="editProduct(${product.id})">Edit</button>
-                <button class="btn btn-danger btn-sm ml-2" onclick="deleteProduct(${product.id})">Hapus</button>
+                <p>${product.name} - Rp ${product.price} - Kategori: ${product.category_id} - Supplier: ${product.supplier_id}</p>
             </div>
         `;
     });
 }
 
-// Transaksi Management
+// Tambahkan Transaksi
 function addTransaction() {
     const customerName = document.getElementById('transaction-customer-name').value;
     const productId = document.getElementById('transaction-product-id').value;
@@ -141,24 +78,30 @@ function addTransaction() {
     showNotification('Transaksi berhasil ditambahkan.');
 }
 
+// Perbarui daftar transaksi
 function updateTransactionList() {
     const transactionList = document.getElementById('transaction-list');
     transactionList.innerHTML = '';
 
     transactions.forEach(transaction => {
         const product = products.find(p => p.id === transaction.productId);
-        transactionList.innerHTML += `
-            <div class="transaction-item">
-                <p>
-                    ${transaction.customerName} - Produk: ${product.name} - Jumlah: ${transaction.quantity} - Status: ${transaction.status}
-                    <button class="btn btn-info btn-sm ml-2" onclick="changeTransactionStatus(${transaction.id}, 'Lunas')">Lunas</button>
-                    <button class="btn btn-danger btn-sm ml-2" onclick="changeTransactionStatus(${transaction.id}, 'Dibatalkan')">Batalkan</button>
-                </p>
-            </div>
-        `;
+        if (product) {
+            transactionList.innerHTML += `
+                <div class="transaction-item">
+                    <p>
+                        ${transaction.customerName} - Produk: ${product.name} - Jumlah: ${transaction.quantity} - Status: ${transaction.status}
+                        <button class="btn btn-info btn-sm ml-2" onclick="changeTransactionStatus(${transaction.id}, 'Lunas')">Lunas</button>
+                        <button class="btn btn-danger btn-sm ml-2" onclick="changeTransactionStatus(${transaction.id}, 'Dibatalkan')">Batalkan</button>
+                    </p>
+                </div>
+            `;
+        } else {
+            console.error('Produk tidak ditemukan dalam transaksi:', transaction);
+        }
     });
 }
 
+// Ubah status transaksi
 function changeTransactionStatus(transactionId, status) {
     const transaction = transactions.find(t => t.id === transactionId);
     if (transaction) {
@@ -196,7 +139,7 @@ function displayFilteredProducts(filteredProducts) {
     });
 }
 
-// Kategori & Supplier Management
+// Tambahkan Kategori
 function addCategory() {
     const name = document.getElementById('category-name').value;
     if (!name) {
@@ -224,6 +167,7 @@ function updateCategorySelectOptions() {
     });
 }
 
+// Tambahkan Supplier
 function addSupplier() {
     const name = document.getElementById('supplier-name').value;
     if (!name) {
@@ -251,6 +195,7 @@ function updateSupplierSelectOptions() {
     });
 }
 
+// Update Daftar Kategori dan Supplier
 function updateCategoryList() {
     const categoryList = document.getElementById('category-list');
     categoryList.innerHTML = '';
@@ -277,9 +222,11 @@ function updateSupplierList() {
     });
 }
 
-// Initialize
-updateProductList();
-updateCategorySelectOptions();
-updateSupplierSelectOptions();
-updateCategoryList();
-updateSupplierList();
+// Inisialisasi
+document.addEventListener('DOMContentLoaded', () => {
+    updateProductSelectOptions();
+    updateCategorySelectOptions();
+    updateSupplierSelectOptions();
+    updateCategoryList();
+    updateSupplierList();
+});
