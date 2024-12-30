@@ -48,7 +48,17 @@ function updateProductList() {
     });
 }
 
-// Tambahkan Transaksi
+// Fungsi untuk memperbarui opsi produk dalam dropdown
+function updateProductSelectOptions() {
+    const productSelect = document.getElementById('transaction-product-id');
+    productSelect.innerHTML = '<option value="">Pilih Produk</option>'; // Default option
+
+    products.forEach(product => {
+        productSelect.innerHTML += `<option value="${product.id}">${product.name} - Rp ${product.price}</option>`;
+    });
+}
+
+// Fungsi untuk menambahkan transaksi
 function addTransaction() {
     const customerName = document.getElementById('transaction-customer-name').value;
     const productId = document.getElementById('transaction-product-id').value;
@@ -74,11 +84,11 @@ function addTransaction() {
     };
 
     transactions.push(newTransaction);
-    updateTransactionList();
+    updateTransactionList(); // Perbarui daftar transaksi
     showNotification('Transaksi berhasil ditambahkan.');
 }
 
-// Perbarui daftar transaksi
+// Fungsi untuk memperbarui daftar transaksi
 function updateTransactionList() {
     const transactionList = document.getElementById('transaction-list');
     transactionList.innerHTML = '';
@@ -100,6 +110,24 @@ function updateTransactionList() {
         }
     });
 }
+
+// Ubah status transaksi
+function changeTransactionStatus(transactionId, status) {
+    const transaction = transactions.find(t => t.id === transactionId);
+    if (transaction) {
+        transaction.status = status;
+        updateTransactionList();
+        showNotification(`Status transaksi berhasil diperbarui menjadi ${status}.`);
+    } else {
+        alert('Transaksi tidak ditemukan.');
+    }
+}
+
+// Inisialisasi dropdown produk saat DOM dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    updateProductSelectOptions();
+});
+
 
 // Ubah status transaksi
 function changeTransactionStatus(transactionId, status) {
