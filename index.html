@@ -90,24 +90,26 @@
         <hr>
 
         <!-- Transaksi Form -->
-        <h2>Tambah Transaksi</h2>
-        <form onsubmit="addTransaction(); return false;">
-            <div class="form-group">
-                <label for="transaction-customer-name">Nama Pelanggan</label>
-                <input type="text" class="form-control" id="transaction-customer-name" placeholder="Masukkan nama pelanggan">
-            </div>
-            <div class="form-group">
-                <label for="transaction-product-id">Produk</label>
-                <select class="form-control" id="transaction-product-id">
-                    <option value="">Pilih Produk</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="transaction-quantity">Jumlah</label>
-                <input type="number" class="form-control" id="transaction-quantity" placeholder="Masukkan jumlah">
-            </div>
-            <button type="submit" class="btn btn-primary">Tambah Transaksi</button>
-        </form>
+        <!-- Transaksi Form -->
+<h2>Tambah Transaksi</h2>
+<form onsubmit="addTransaction(); return false;">
+    <div class="form-group">
+        <label for="transaction-customer-name">Nama Pelanggan</label>
+        <input type="text" class="form-control" id="transaction-customer-name" placeholder="Masukkan nama pelanggan">
+    </div>
+    <div class="form-group">
+        <label for="transaction-product-id">Produk</label>
+        <select class="form-control" id="transaction-product-id">
+            <option value="">Pilih Produk</option> <!-- Default option -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="transaction-quantity">Jumlah</label>
+        <input type="number" class="form-control" id="transaction-quantity" placeholder="Masukkan jumlah">
+    </div>
+    <button type="submit" class="btn btn-primary">Tambah Transaksi</button>
+</form>
+
 
         <hr>
 
